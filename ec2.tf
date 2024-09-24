@@ -13,16 +13,6 @@ resource "aws_subnet" "my_subnet" {
   cidr_block = "10.0.1.0/24"
 }
 
-# EC2 인스턴스 생성
-resource "aws_instance" "ec2" {
-  ami           = "ami-0a5a6128e65676ebb"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.my_subnet.id
-
-  # 보안 그룹 필요 시 추가
-  security_groups = [aws_security_group.my_sg.name]
-}
-
 # 보안 그룹 생성
 resource "aws_security_group" "my_sg" {
   name        = "allow_ssh"
@@ -42,6 +32,16 @@ resource "aws_security_group" "my_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+# EC2 인스턴스 생성
+resource "aws_instance" "ec2" {
+  ami           = "ami-0a5a6128e65676ebb"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.my_subnet.id
+  
+  # 보안 그룹 ID를 사용
+  vpc_security_group_ids = [aws_security_group.my_sg.id]
 }
 
 # EC2 인스턴스 퍼블릭 IP 출력
