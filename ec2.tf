@@ -11,6 +11,7 @@ resource "aws_vpc" "my_vpc" {
 resource "aws_subnet" "my_subnet" {
   vpc_id     = aws_vpc.my_vpc.id
   cidr_block = "10.0.1.0/24"
+  availability_zone = "ap-northeast-2a"  # Specify a valid AZ
 }
 
 # 보안 그룹 생성
@@ -36,12 +37,13 @@ resource "aws_security_group" "my_sg" {
 
 # EC2 인스턴스 생성
 resource "aws_instance" "ec2" {
-  ami           = "ami-0a5a6128e65676ebb"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.my_subnet.id
-  
-  # 보안 그룹 ID를 사용
+  ami                    = "ami-0a5a6128e65676ebb"
+  instance_type         = "t2.micro"
+  subnet_id             = aws_subnet.my_subnet.id
   vpc_security_group_ids = [aws_security_group.my_sg.id]
+
+  # Public IP address assignment
+  associate_public_ip_address = true
 }
 
 # EC2 인스턴스 퍼블릭 IP 출력
